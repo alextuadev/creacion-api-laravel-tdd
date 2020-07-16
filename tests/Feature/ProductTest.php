@@ -20,10 +20,10 @@ class ProductTest extends TestCase
         ]);
 
         $response->assertJsonStructure(["name", "price"])
-                ->assertJson(['name'=>'Carnitas'])
-                ->assertStatus(201);
+            ->assertJson(['name' => 'Carnitas'])
+            ->assertStatus(201);
 
-        $this->assertDatabaseHas('products', ['name'=>'Carnitas', 'price'=> 100]);
+        $this->assertDatabaseHas('products', ['name' => 'Carnitas', 'price' => 100]);
     }
 
     public function test_list_products()
@@ -36,6 +36,21 @@ class ProductTest extends TestCase
                 '*' => ['id', 'name', 'price', 'created_at', 'updated_at']
             ]
         ])->assertStatus(200);
+    }
 
+    public function test_update_products()
+    {
+        $product = factory(Product::class)->create();
+
+        $response = $this->json('PUT', "/api/products/$product->id", [
+            "name" => "Carnitas repotenciadas",
+            "price" => 500
+        ]);
+
+        $response->assertJsonStructure(["name", "price"])
+            ->assertJson(['name' => 'Carnitas repotenciadas', 'price' => 500])
+            ->assertStatus(200);
+
+        $this->assertDatabaseHas('products', ['name' => 'Carnitas repotenciadas', 'price' => 500]);
     }
 }
