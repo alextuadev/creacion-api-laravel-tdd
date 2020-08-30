@@ -14,4 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::apiResource('products', 'ProductController');
+Route::prefix('auth')->group(function(){
+    Route::post('register', 'AuthController@register');
+    Route::post('login', 'AuthController@login');
+});
+
+Route::middleware('auth:api')->group(function(){
+    Route::apiResource('products', 'ProductController');
+});
+
+

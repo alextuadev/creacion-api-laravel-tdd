@@ -3,8 +3,10 @@
 namespace Tests\Feature;
 
 use App\Product;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 class ProductTest extends TestCase
@@ -14,6 +16,9 @@ class ProductTest extends TestCase
     /** @test */
     public function store_products()
     {
+        $user = factory(User::class)->create();
+        Passport::actingAs($user);
+
         $response = $this->json('POST', '/api/products', [
             "name" => "Carnitas",
             "price" => 100
@@ -28,6 +33,9 @@ class ProductTest extends TestCase
 
     public function test_list_products()
     {
+        $user = factory(User::class)->create();
+        Passport::actingAs($user);
+
         factory(Product::class, 20)->create();
 
         $response = $this->json('GET','/api/products');
@@ -40,6 +48,9 @@ class ProductTest extends TestCase
 
     public function test_update_products()
     {
+        $user = factory(User::class)->create();
+        Passport::actingAs($user);
+
         $product = factory(Product::class)->create();
 
         $response = $this->json('PUT', "/api/products/$product->id", [
@@ -56,6 +67,9 @@ class ProductTest extends TestCase
 
     public function test_show_product_by_id()
     {
+        $user = factory(User::class)->create();
+        Passport::actingAs($user);
+
         $product = factory(Product::class)->create();
         $response = $this->json('GET', "/api/products/$product->id");
 
@@ -67,6 +81,9 @@ class ProductTest extends TestCase
 
     public function test_404_product_by_id()
     {
+        $user = factory(User::class)->create();
+        Passport::actingAs($user);
+
         $response = $this->json('GET', "/api/products/9500");
         $response->assertHeader('Content-type', 'application/json');
 
@@ -77,8 +94,10 @@ class ProductTest extends TestCase
 
     public function test_delete_product()
     {
-        $product = factory(Product::class)->create();
+        $user = factory(User::class)->create();
+        Passport::actingAs($user);
 
+        $product = factory(Product::class)->create();
         $response = $this->json('DELETE', "/api/products/$product->id");
 
         $response->assertStatus(204);
